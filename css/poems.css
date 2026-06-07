@@ -1,0 +1,85 @@
+/* =========================================================================
+   poems.css — long-form reading layout, shared by /poems and /thoughts
+   Link AFTER base.css.
+   ========================================================================= */
+
+.reading {
+  width: min(var(--measure), 100% - 2 * var(--gap));
+  margin-inline: auto;
+  padding: clamp(2.5rem, 8vw, 6rem) 0 clamp(3rem, 8vw, 6rem);
+}
+
+.reading .kicker {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin-bottom: 1.4rem;
+}
+
+.reading h1 {
+  font-family: var(--font-display);
+  font-weight: 360;
+  font-size: clamp(2rem, 1rem + 4vw, 3.4rem);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  margin-bottom: 0.6rem;
+}
+
+.reading .meta {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+
+/* --- verse ---------------------------------------------------------------- */
+.verse {
+  font-family: var(--font-display);
+  font-weight: 360;
+  font-size: 1.4rem;
+  line-height: 1.7;
+  white-space: pre-wrap;        /* preserve poet's line breaks & indents */
+  font-variation-settings: "SOFT" 30;
+}
+.verse + .verse { margin-top: 1.8rem; }   /* stanza break */
+
+/* --- prose (philosophical fragments) ------------------------------------- */
+.prose p { margin-bottom: 1.4rem; }
+.prose p:first-of-type::first-letter {
+  font-family: var(--font-display);
+  font-size: 3.6em;
+  font-weight: 400;
+  float: left;
+  line-height: 0.72;
+  padding: 0.06em 0.12em 0 0;
+  color: var(--rust);
+}
+.prose blockquote {
+  margin: 2rem 0;
+  padding-left: 1.25rem;
+  border-left: 2px solid var(--rust);
+  font-style: italic;
+  color: var(--ink-soft);
+}
+
+/* --- footer of a piece ---------------------------------------------------- */
+.colophon {
+  margin-top: clamp(2.5rem, 6vw, 4rem);
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+}
+.back {
+  display: inline-block;
+  margin-top: 1rem;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.25s, color 0.25s;
+}
+.back:hover { color: var(--rust); border-color: var(--rust); }

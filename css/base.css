@@ -1,0 +1,314 @@
+/* =========================================================================
+   HCW — base.css
+   Aesthetic: quiet literary / editorial. Warm paper, deep ink, characterful
+   serif. CSS-only. Auto light/dark via prefers-color-scheme.
+   Edit the tokens below to re-skin the whole site.
+   ========================================================================= */
+
+/* ---- Fonts (loaded in each HTML <head> via Google Fonts) ----------------
+   Display : Fraunces  (optical, soft, characterful)
+   Body    : Newsreader (literary, built for reading)
+   Labels  : system monospace (no extra load)
+   ------------------------------------------------------------------------- */
+
+:root {
+  /* warm paper / light */
+  --paper:    #f3eee3;
+  --paper-2:  #ece4d4;
+  --ink:      #1c1714;
+  --ink-soft: #4d4339;
+  --rust:     #9c4a2f;
+  --rule:     rgba(28, 23, 20, 0.16);
+  --shadow:   rgba(28, 23, 20, 0.10);
+
+  --measure: 34rem;          /* readable line length for long-form */
+  --gap: clamp(1.25rem, 4vw, 3rem);
+
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body:    "Newsreader", Georgia, serif;
+  --font-mono:    ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper:    #14110e;
+    --paper-2:  #1d1813;
+    --ink:      #ece4d4;
+    --ink-soft: #b4a995;
+    --rust:     #d6794f;
+    --rule:     rgba(236, 228, 212, 0.16);
+    --shadow:   rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* ---- reset --------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+img, picture { display: block; max-width: 100%; height: auto; }
+a { color: inherit; }
+
+/* ---- base ---------------------------------------------------------------- */
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: clamp(1.05rem, 0.6rem + 0.9vw, 1.2rem);
+  line-height: 1.65;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* subtle paper grain — pure SVG noise, no image asset needed */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media (prefers-color-scheme: dark) { body::before { opacity: 0.06; } }
+
+.wrap {
+  width: min(72rem, 100% - 2 * var(--gap));
+  margin-inline: auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================================================================
+   SHARED HEADER  — copy this block into every page (keep paths root-relative)
+   ========================================================================= */
+.masthead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: clamp(1.5rem, 4vw, 2.75rem) 0 clamp(1.25rem, 3vw, 2rem);
+  border-bottom: 1px solid var(--rule);
+  flex-wrap: wrap;
+}
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.5rem;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+}
+.wordmark span { color: var(--rust); }
+.nav {
+  display: flex;
+  gap: clamp(1rem, 3vw, 2rem);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.nav a {
+  text-decoration: none;
+  color: var(--ink-soft);
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid transparent;
+  transition: color 0.25s, border-color 0.25s;
+}
+.nav a:hover, .nav a[aria-current="page"] {
+  color: var(--ink);
+  border-color: var(--rust);
+}
+
+/* =========================================================================
+   SHARED FOOTER — copy into every page
+   ========================================================================= */
+.foot {
+  margin-top: auto;
+  padding: clamp(2rem, 5vw, 3.5rem) 0 2rem;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+}
+
+/* =========================================================================
+   LANDING
+   ========================================================================= */
+.hero {
+  padding: clamp(3rem, 11vw, 8rem) 0 clamp(2.5rem, 7vw, 5rem);
+}
+.hero .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin-bottom: 1.4rem;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 340;
+  font-size: clamp(2.7rem, 1rem + 8vw, 6.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  max-width: 16ch;
+  font-variation-settings: "SOFT" 40, "WONK" 1;
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--rust);
+}
+.hero .lede {
+  margin-top: clamp(1.5rem, 4vw, 2.5rem);
+  max-width: var(--measure);
+  font-size: 1.2em;
+  color: var(--ink-soft);
+}
+
+/* index of realms */
+.realms {
+  list-style: none;
+  padding: 0;
+  border-top: 1px solid var(--rule);
+}
+.realm a {
+  display: grid;
+  grid-template-columns: 4rem 1fr auto;
+  align-items: baseline;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  padding: clamp(1.5rem, 4vw, 2.5rem) 0;
+  border-bottom: 1px solid var(--rule);
+  text-decoration: none;
+  transition: padding-left 0.3s ease, background 0.3s;
+}
+.realm a:hover { padding-left: 1rem; }
+.realm .num {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--rust);
+  letter-spacing: 0.1em;
+}
+.realm .title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.8rem, 1rem + 3vw, 3rem);
+  line-height: 1.05;
+}
+.realm .title small {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  margin-top: 0.4rem;
+  max-width: 40ch;
+}
+.realm .arrow {
+  font-family: var(--font-mono);
+  color: var(--ink-soft);
+  transition: transform 0.3s, color 0.3s;
+}
+.realm a:hover .arrow { transform: translateX(0.5rem); color: var(--rust); }
+
+@media (max-width: 34rem) {
+  .realm a { grid-template-columns: 2.5rem 1fr; }
+  .realm .arrow { display: none; }
+}
+
+/* =========================================================================
+   GALLERY  (CSS columns masonry + :target lightbox, no JS)
+   ========================================================================= */
+.page-head {
+  padding: clamp(2.5rem, 7vw, 5rem) 0 clamp(1.5rem, 4vw, 3rem);
+}
+.page-head .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin-bottom: 1rem;
+}
+.page-head h1 {
+  font-family: var(--font-display);
+  font-weight: 360;
+  font-size: clamp(2.2rem, 1rem + 5vw, 4rem);
+  letter-spacing: -0.015em;
+}
+
+.gallery {
+  columns: 3 16rem;
+  column-gap: 1.25rem;
+  padding-bottom: 4rem;
+}
+.gallery figure {
+  break-inside: avoid;
+  margin: 0 0 1.25rem;
+}
+.gallery img {
+  width: 100%;
+  border: 1px solid var(--rule);
+  background: var(--paper-2);
+  box-shadow: 0 1px 0 var(--shadow);
+  transition: transform 0.4s ease, box-shadow 0.4s;
+}
+.gallery a:hover img {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px var(--shadow);
+}
+.gallery figcaption {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  margin-top: 0.5rem;
+}
+
+/* CSS-only lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in oklab, var(--paper) 30%, #000 70%);
+  padding: 5vmin;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.lightbox:target {
+  opacity: 1;
+  pointer-events: auto;
+}
+.lightbox img { max-height: 90vh; width: auto; box-shadow: 0 20px 60px rgba(0,0,0,.6); }
+.lightbox .close { position: absolute; inset: 0; }
+
+/* =========================================================================
+   page-load reveal (single staggered entrance — restrained)
+   ========================================================================= */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal > * {
+    opacity: 0;
+    transform: translateY(0.8rem);
+    animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  }
+  .reveal > *:nth-child(1) { animation-delay: 0.05s; }
+  .reveal > *:nth-child(2) { animation-delay: 0.18s; }
+  .reveal > *:nth-child(3) { animation-delay: 0.31s; }
+  .reveal > *:nth-child(4) { animation-delay: 0.44s; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+}
+
+::selection { background: var(--rust); color: var(--paper); }
+:focus-visible { outline: 2px solid var(--rust); outline-offset: 3px; }
