@@ -46,6 +46,7 @@ metadata and git/PR mechanics handled automatically.
 | Deploy trigger | Push to **`main` only**; branch deploys + PR previews **off** |
 | Sections | **Verses** (songs + poems) and **Thoughts** — no images |
 | Verse `kind` default | **song** (override with `kind: poem`) |
+| Authoring CLI | **bash + `fzf`** (`bin/hcw`): interactive menu + direct subcommands, run from the repo (no global install) |
 | Editor | Configurable via `HCW_EDITOR`, **default VS Code** (`code`) |
 | Publish | **GitHub auto-merge** (squash), gated on a build-check Action |
 | Build-check | Lightweight **GitHub Action** builds on PRs (no deploy); required check on `main` |
@@ -62,11 +63,11 @@ never in the browser.
 ```
 hcw-site/
   .eleventy.js          # 11ty config: collections, filters, passthrough copy
-  package.json          # dep: @11ty/eleventy. scripts: build, serve, write, publish
+  package.json          # dev-dep: @11ty/eleventy. scripts: build, serve
   netlify.toml          # build command + publish dir + main-only guard
   .nvmrc                # node version (matches netlify NODE_VERSION)
   bin/
-    hcw.js              # authoring CLI (write / publish)
+    hcw                 # authoring CLI (bash + fzf): menu + direct subcommands
   .github/
     workflows/
       build.yml         # PR build-check (no deploy)
@@ -246,37 +247,63 @@ GitHub setting). GitHub auto-merge then holds a PR until this check is green.
 
 Free: public-repo Actions minutes are unlimited; a build is ~20s.
 
-## Authoring CLI (`bin/hcw.js`)
+## Authoring CLI (`bin/hcw`)
 
-A small Node CLI, exposed as `npm run write` and `npm run publish`. Editor is
-configurable via the `HCW_EDITOR` environment variable, defaulting to `code`
-(VS Code).
+A single bash script, run from the repo: `./bin/hcw`. It drives everything via
+`fzf` menus (one command to remember) and also accepts direct subcommands (skip
+the menus). No global install; the script resolves its own location, so it works
+from any subdirectory of the repo. Editor configurable via `HCW_EDITOR`,
+default `code` (VS Code).
 
-### `npm run write`
+The script must be self-locating: it derives the repo root from its own path
+(`cd "$(dirname "$0")/.."` or `git rev-parse --show-toplevel`) so all git/file
+operations target the repo regardless of the caller's CWD.
 
-Interactive, minimal prompts:
-1. **What are you writing?** → `Verse` / `Thought`
-2. If Verse: **song or poem?** → sets `kind` (default highlight: song)
-3. **Title:** → free text
+### Command surface
 
-Then fully automatic (no further input):
-- Slugify the title (lowercase, hyphenated).
-- `git switch -c edit/<slug>` (create the edit branch).
-- Write `src/<section>/<slug>.md` with frontmatter pre-filled: `title`,
-  `date` (today, auto-generated), and `kind` for verses.
-- Start `eleventy --serve` (in the background if not already running) and open
-  the browser at the new page's URL.
-- Open the new file in the editor (`HCW_EDITOR`, default `code`).
+| Invocation | Behaviour |
+|------------|-----------|
+| `./bin/hcw` | fzf top menu: `write` / `publish` |
+| `./bin/hcw write` | fzf menu: `verses` / `thoughts`, then (for verses) `song` / `poem` |
+| `./bin/hcw verse [title] [--poem]` | new verse directly (kind defaults **song**; `--poem` sets `kind: poem`) |
+| `./bin/hcw thought [title]` | new thought directly |
+| `./bin/hcw publish` | run the publish flow |
 
-The author types and saves; the live-reload server refreshes the browser.
+If a `title` argument is omitted, the script prompts for it with `read -r`
+(fzf is for fixed choices; free text uses `read`).
 
-On editor close, prompt: **Publish now? (y/N)**
-- `y` → run the publish flow below.
-- `N` → leave the branch in place; the author can run `npm run publish` later.
+**fzf fallback:** if `fzf` is not on `PATH`, fall back to bash's built-in
+`select` menu so the tool still works. fzf is the recommended experience.
 
-### `npm run publish`
+**Optional convenience (documented in README, not shipped active):** users who
+want a bare `hcw` and underscore commands from anywhere can add to `~/.zshrc`:
+```sh
+alias hcw='/abs/path/to/hcw-site/bin/hcw'
+hcw_verse()   { /abs/path/to/hcw-site/bin/hcw verse "$@"; }
+hcw_thought() { /abs/path/to/hcw-site/bin/hcw thought "$@"; }
+hcw_publish() { /abs/path/to/hcw-site/bin/hcw publish; }
+```
 
-1. `npm run build` locally; **abort** on failure (fast local feedback before any
+### Write flow (menu or `verse`/`thought` subcommand)
+
+1. Determine section (`verses`/`thoughts`) and, for verses, `kind`
+   (`song`/`poem`) — from menu picks or subcommand + flags.
+2. Read the title (argument or `read -r` prompt).
+3. Slugify the title (lowercase, non-alphanumerics → hyphens, collapse repeats).
+4. `git switch -c edit/<slug>` (create the edit branch).
+5. Write `src/<section>/<slug>.md` with frontmatter pre-filled: `title`,
+   `date` (today via `date +%F`), and `kind` for verses.
+6. Start `eleventy --serve` in the background if not already running
+   (`npm run serve &`), capture its PID, and open the browser
+   (`open` on macOS) at the new page's URL.
+7. Open the file in the editor (`${HCW_EDITOR:-code}`).
+
+On return from the editor, an fzf (or `select`) prompt: **publish now?** →
+`yes` runs the publish flow; `no` leaves the branch for `./bin/hcw publish` later.
+
+### Publish flow (menu or `publish` subcommand)
+
+1. `npm run build` locally; **abort** on non-zero exit (fast feedback before any
    remote action).
 2. Stage + commit changes (commit message = piece title).
 3. Push the `edit/<slug>` branch.
@@ -289,7 +316,8 @@ Netlify then auto-deploys `main`.
 
 ### Prerequisites
 
-- Node + npm (you already use npm).
+- Node + npm (used for `@11ty/eleventy` build/serve).
+- `fzf` (`brew install fzf`) — optional; `select` fallback if absent.
 - `gh` CLI authenticated for the **HCWilde** GitHub account. The remote uses the
   `github-hcw` SSH host alias, so `gh`/git must be configured to push as that
   account.
@@ -302,6 +330,7 @@ Netlify then auto-deploys `main`.
 - `npm run serve` — build + serve at `http://localhost:8080`, watch files,
   auto-reload on save. Replaces `python3 -m http.server`.
 - `npm run build` — one-shot build to `_site/` (exactly what Netlify runs).
+- `./bin/hcw` — the authoring CLI; starts the serve itself during a write.
 
 ## Migration
 
@@ -326,9 +355,12 @@ Netlify then auto-deploys `main`.
   `_site/verses/index.html` with the correct Roman ordinal, without editing the
   index template.
 - **Shared nav:** changing `site.json` updates the header on all generated pages.
-- **CLI:** `hcw write` (non-interactive/flag mode for tests) scaffolds the right
-  file path + frontmatter and creates the `edit/<slug>` branch; `hcw publish`
-  refuses to proceed when `npm run build` fails.
+- **CLI:** the slugify helper maps titles to expected slugs (e.g.
+  `"Harbour at 6am"` → `harbour-at-6am`); `./bin/hcw verse "Title"` (in a temp
+  git repo) creates `src/verses/<slug>.md` with correct frontmatter (`title`,
+  `date`, `kind: song`) and the `edit/<slug>` branch; `--poem` sets `kind: poem`;
+  `./bin/hcw publish` aborts (non-zero, no push) when `npm run build` fails. Use
+  `bats-core` or plain shell assertions; stub `git`/`gh`/`npm`/editor as needed.
 - **Deploy guard:** `netlify.toml` `ignore` command exits non-zero when `BRANCH`
   != `main`.
 
