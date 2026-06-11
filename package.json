@@ -1,0 +1,16 @@
+{
+  "name": "hcw-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "HCW — collected works (Eleventy static site)",
+  "scripts": {
+    "build": "eleventy",
+    "serve": "eleventy --serve",
+    "test:build": "node --test test/build.test.mjs",
+    "test:cli": "bash test/hcw.test.sh",
+    "test": "npm run build && npm run test:build && npm run test:cli"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0"
+  }
+}
