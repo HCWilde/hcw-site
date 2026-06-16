@@ -12,7 +12,7 @@ echo "PASS: hcw slugify"
 
 # --- scaffold (isolated temp git repo) ---
 TMP="$(mktemp -d)"
-trap 'rm -rf "$TMP"' EXIT
+trap 'rm -rf "$TMP" "${TMP2:-}"' EXIT
 git -C "$TMP" init -q
 git -C "$TMP" commit -q --allow-empty -m init
 mkdir -p "$TMP/bin"
@@ -27,3 +27,33 @@ grep -q '^date: [0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}$' "$TMP/src/verses/test-title.m
 [ "$(git -C "$TMP" rev-parse --abbrev-ref HEAD)" = "edit/test-title" ] || fail "edit branch created"
 
 echo "PASS: hcw scaffold"
+
+# --- publish aborts when build fails, never pushes ---
+TMP2="$(mktemp -d)"
+trap 'rm -rf "$TMP" "$TMP2"' EXIT
+git -C "$TMP2" init -q
+git -C "$TMP2" commit -q --allow-empty -m init
+mkdir -p "$TMP2/bin" "$TMP2/stub"
+cp "$ROOT/bin/hcw" "$TMP2/bin/hcw"
+
+# stub npm (build fails) + git/gh (record calls) so nothing real happens
+cat > "$TMP2/stub/npm" <<'EOF'
+#!/usr/bin/env bash
+[ "$1" = "run" ] && [ "$2" = "build" ] && { echo "build failed" >&2; exit 1; }
+exit 0
+EOF
+cat > "$TMP2/stub/gh" <<'EOF'
+#!/usr/bin/env bash
+echo "gh $*" >> "$HCW_CALLS"
+EOF
+chmod +x "$TMP2/stub/npm" "$TMP2/stub/gh"
+
+export HCW_CALLS="$TMP2/calls.log"; : > "$HCW_CALLS"
+set +e
+( cd "$TMP2" && PATH="$TMP2/stub:$PATH" ./bin/hcw publish )
+rc=$?
+set -e
+[ "$rc" -ne 0 ] || fail "publish should exit non-zero when build fails"
+[ ! -s "$HCW_CALLS" ] || fail "publish must not call gh when build fails"
+
+echo "PASS: hcw publish aborts on build failure"
