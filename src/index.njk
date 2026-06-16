@@ -1,0 +1,22 @@
+---
+layout: base.njk
+---
+<main class="wrap">
+  <section class="hero reveal">
+    <p class="eyebrow">collected works</p>
+    <h1>{{ site.heroHeading | safe }}</h1>
+    <p class="lede">{{ site.heroLede }}</p>
+  </section>
+
+  <ul class="realms reveal">
+    {% for s in site.sections %}
+    <li class="realm">
+      <a href="{{ s.url }}">
+        <span class="num">{{ s.num }}</span>
+        <span class="title">{{ s.label }}<small>{{ s.blurb }}</small></span>
+        <span class="arrow">→</span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</main>

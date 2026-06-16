@@ -1,0 +1,12 @@
+{
+  "title": "HCW — collected works",
+  "description": "Songs, poems, and philosophical fragments by H. C. Wilde.",
+  "author": "H. C. Wilde",
+  "footerNote": "MMXXVI — kept by hand",
+  "heroHeading": "Things I made in the <em>quiet</em> hours.",
+  "heroLede": "Songs and poems written and abandoned, and thoughts that wanted somewhere to live. A small room, mostly empty, with the lamp left on.",
+  "sections": [
+    { "num": "01", "label": "Verses",   "url": "/verses/",   "blurb": "Songs, poems, and lines that arrived uninvited." },
+    { "num": "02", "label": "Thoughts", "url": "/thoughts/", "blurb": "Philosophical fragments, half-finished arguments." }
+  ]
+}
