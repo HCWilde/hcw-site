@@ -27,3 +27,11 @@ test("verse page preserves stanzas as verse paragraphs", () => {
   assert.match(html, /All night the water practiced your name\n/, "line breaks preserved inside a stanza");
   assert.match(html, /poems\.css/, "links the reading stylesheet");
 });
+
+test("verses index lists pieces with roman ordinals", () => {
+  assert.ok(has("verses/index.html"), "verses index built");
+  const html = read("verses/index.html");
+  assert.match(html, /The Sea Does Not Remember/, "lists the sample verse");
+  assert.match(html, /href="\/verses\/sea\/"/, "links to the verse page");
+  assert.match(html, /<span class="num">i<\/span>/, "first item numbered i");
+});

@@ -1,0 +1,23 @@
+---
+layout: base.njk
+title: Verses
+permalink: /verses/
+---
+<main class="wrap">
+  <section class="page-head reveal">
+    <p class="eyebrow">01 — verses</p>
+    <h1>Verses</h1>
+  </section>
+
+  <ul class="realms reveal">
+    {% for v in collections.verse %}
+    <li class="realm">
+      <a href="{{ v.url }}">
+        <span class="num">{{ loop.index | roman }}</span>
+        <span class="title">{{ v.data.title }}<small>{{ v.date | year }} · {{ v.data.kind or "song" }}</small></span>
+        <span class="arrow">→</span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</main>
