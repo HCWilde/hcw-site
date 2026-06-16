@@ -1,0 +1,8 @@
+[build]
+  command = "npx @11ty/eleventy"
+  publish = "_site"
+  # skip the build on any branch other than main (Netlify: ignore exit 0 = skip)
+  ignore  = "bash -c '[ \"$BRANCH\" != \"main\" ]'"
+
+[build.environment]
+  NODE_VERSION = "20"
