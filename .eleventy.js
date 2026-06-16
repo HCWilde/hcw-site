@@ -32,7 +32,8 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addFilter("startsWith", (s, p) => String(s).startsWith(p));
   eleventyConfig.addFilter("roman", romanize);
   eleventyConfig.addFilter("verses", versesToHtml);
-  eleventyConfig.addFilter("year", (d) => new Date(d).getFullYear());
+  // getUTCFullYear avoids a timezone off-by-one when dates are UTC-midnight (e.g. 2026-01-01)
+  eleventyConfig.addFilter("year", (d) => new Date(d).getUTCFullYear());
   eleventyConfig.addFilter("ordinalOf", (collection, url) => {
     const i = collection.findIndex((item) => item.url === url);
     return i < 0 ? 1 : i + 1;
