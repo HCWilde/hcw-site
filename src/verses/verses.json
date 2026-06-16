@@ -1,0 +1,5 @@
+{
+  "layout": "verse.njk",
+  "tags": "verse",
+  "extraCss": "/css/poems.css"
+}

@@ -1,0 +1,15 @@
+---
+layout: base.njk
+---
+<main class="reading reveal">
+  <p class="kicker">{{ kind or "song" }} · {{ collections.verse | ordinalOf(page.url) | roman }}</p>
+  <h1>{{ title }}</h1>
+  <p class="meta">{{ page.date | year }}</p>
+
+  {{ page.rawInput | verses | safe }}
+
+  <div class="colophon">
+    <p>{{ colophon or "Written in the quiet hours. Revise freely — it is only paper." }}</p>
+    <a class="back" href="/verses/">← all verses</a>
+  </div>
+</main>

@@ -17,3 +17,13 @@ test("landing page builds with shared chrome", () => {
 test("css is passed through", () => {
   assert.ok(has("css/base.css"), "_site/css/base.css exists");
 });
+
+test("verse page preserves stanzas as verse paragraphs", () => {
+  assert.ok(has("verses/sea/index.html"), "verse page built at pretty URL");
+  const html = read("verses/sea/index.html");
+  const stanzas = html.match(/<p class="verse">/g) || [];
+  assert.equal(stanzas.length, 3, "three stanzas -> three verse paragraphs");
+  assert.match(html, /poem · i/, "kicker shows kind + roman ordinal");
+  assert.match(html, /All night the water practiced your name\n/, "line breaks preserved inside a stanza");
+  assert.match(html, /poems\.css/, "links the reading stylesheet");
+});
