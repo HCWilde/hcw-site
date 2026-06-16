@@ -51,3 +51,8 @@ test("thoughts index lists pieces", () => {
   assert.match(html, /On Entropy and Tidy Desks/, "lists the sample thought");
   assert.match(html, /href="\/thoughts\/entropy\/"/, "links to the thought page");
 });
+
+test("404 page builds", () => {
+  assert.ok(has("404.html"), "_site/404.html exists");
+  assert.match(read("404.html"), /took the/, "renders 404 copy");
+});
