@@ -56,3 +56,10 @@ test("404 page builds", () => {
   assert.ok(has("404.html"), "_site/404.html exists");
   assert.match(read("404.html"), /took the/, "renders 404 copy");
 });
+
+test("gallery/lightbox css removed", () => {
+  const css = read("css/base.css");
+  assert.doesNotMatch(css, /\.lightbox/, "no lightbox rules remain");
+  assert.doesNotMatch(css, /\.gallery/, "no gallery rules remain");
+  assert.match(css, /\.page-head/, "page-head retained for index pages");
+});

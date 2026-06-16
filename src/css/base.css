@@ -225,7 +225,7 @@ body::before {
 }
 
 /* =========================================================================
-   GALLERY  (CSS columns masonry + :target lightbox, no JS)
+   SECTION HEAD (verses / thoughts index)
    ========================================================================= */
 .page-head {
   padding: clamp(2.5rem, 7vw, 5rem) 0 clamp(1.5rem, 4vw, 3rem);
@@ -244,55 +244,6 @@ body::before {
   font-size: clamp(2.2rem, 1rem + 5vw, 4rem);
   letter-spacing: -0.015em;
 }
-
-.gallery {
-  columns: 3 16rem;
-  column-gap: 1.25rem;
-  padding-bottom: 4rem;
-}
-.gallery figure {
-  break-inside: avoid;
-  margin: 0 0 1.25rem;
-}
-.gallery img {
-  width: 100%;
-  border: 1px solid var(--rule);
-  background: var(--paper-2);
-  box-shadow: 0 1px 0 var(--shadow);
-  transition: transform 0.4s ease, box-shadow 0.4s;
-}
-.gallery a:hover img {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 30px var(--shadow);
-}
-.gallery figcaption {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.06em;
-  color: var(--ink-soft);
-  margin-top: 0.5rem;
-}
-
-/* CSS-only lightbox */
-.lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: color-mix(in oklab, var(--paper) 30%, #000 70%);
-  padding: 5vmin;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-}
-.lightbox:target {
-  opacity: 1;
-  pointer-events: auto;
-}
-.lightbox img { max-height: 90vh; width: auto; box-shadow: 0 20px 60px rgba(0,0,0,.6); }
-.lightbox .close { position: absolute; inset: 0; }
 
 /* =========================================================================
    page-load reveal (single staggered entrance — restrained)
