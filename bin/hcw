@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+EDITOR_CMD="${HCW_EDITOR:-code}"
+
+slugify() {
+  printf '%s' "$1" \
+    | tr '[:upper:]' '[:lower:]' \
+    | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//'
+}
+
+# menu PROMPT OPTION...  -> prints the chosen option
+menu() {
+  local prompt="$1"; shift
+  if command -v fzf >/dev/null 2>&1; then
+    printf '%s\n' "$@" | fzf --prompt="$prompt> " --height=40% --reverse
+  else
+    local opt
+    PS3="$prompt> "
+    select opt in "$@"; do [ -n "${opt:-}" ] && { printf '%s\n' "$opt"; return; }; done
+  fi
+}
+
+# scaffold SECTION KIND TITLE  -> creates edit branch + frontmatter file, prints the file path
+scaffold() {
+  local section="$1" kind="${2:-}" title="$3"
+  local slug; slug="$(slugify "$title")"
+  local file="$REPO_ROOT/src/$section/$slug.md"
+  ( cd "$REPO_ROOT" && git switch -c "edit/$slug" )
+  mkdir -p "$REPO_ROOT/src/$section"
+  {
+    echo "---"
+    echo "title: $title"
+    echo "date: $(date +%F)"
+    [ "$section" = "verses" ] && echo "kind: ${kind:-song}"
+    echo "---"
+    echo ""
+  } > "$file"
+  printf '%s\n' "$file"
+}
+
+# allow tests to source the helpers above without running the dispatcher
+if [ "${HCW_LIB:-}" = "1" ]; then
+  return 0 2>/dev/null || exit 0
+fi
+
+main() {
+  echo "hcw: not yet implemented" >&2
+  exit 1
+}
+
+main "$@"
