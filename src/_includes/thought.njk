@@ -1,0 +1,17 @@
+---
+layout: base.njk
+---
+<main class="reading reveal">
+  <p class="kicker">fragment · {{ collections.thought | ordinalOf(page.url) | roman }}</p>
+  <h1>{{ title }}</h1>
+  <p class="meta">{{ page.date | year }}</p>
+
+  <div class="prose">
+    {{ content | safe }}
+  </div>
+
+  <div class="colophon">
+    <p>{{ colophon or "A fragment, deliberately unfinished." }}</p>
+    <a class="back" href="/thoughts/">← all thoughts</a>
+  </div>
+</main>

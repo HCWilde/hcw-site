@@ -35,3 +35,12 @@ test("verses index lists pieces with roman ordinals", () => {
   assert.match(html, /href="\/verses\/sea\/"/, "links to the verse page");
   assert.match(html, /<span class="num">i<\/span>/, "first item numbered i");
 });
+
+test("thought page renders prose and blockquote", () => {
+  assert.ok(has("thoughts/entropy/index.html"), "thought page built");
+  const html = read("thoughts/entropy/index.html");
+  assert.match(html, /class="prose"/, "wrapped in prose");
+  assert.match(html, /<blockquote>/, "markdown > becomes blockquote");
+  assert.match(html, /fragment · i/, "kicker shows fragment + roman");
+  assert.match(html, /Order is not a state but a verb/, "renders body text");
+});
