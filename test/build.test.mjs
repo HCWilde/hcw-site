@@ -44,3 +44,10 @@ test("thought page renders prose and blockquote", () => {
   assert.match(html, /fragment · i/, "kicker shows fragment + roman");
   assert.match(html, /Order is not a state but a verb/, "renders body text");
 });
+
+test("thoughts index lists pieces", () => {
+  assert.ok(has("thoughts/index.html"), "thoughts index built");
+  const html = read("thoughts/index.html");
+  assert.match(html, /On Entropy and Tidy Desks/, "lists the sample thought");
+  assert.match(html, /href="\/thoughts\/entropy\/"/, "links to the thought page");
+});

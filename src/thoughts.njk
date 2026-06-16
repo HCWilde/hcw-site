@@ -1,0 +1,23 @@
+---
+layout: base.njk
+title: Thoughts
+permalink: /thoughts/
+---
+<main class="wrap">
+  <section class="page-head reveal">
+    <p class="eyebrow">02 — thoughts</p>
+    <h1>Thoughts</h1>
+  </section>
+
+  <ul class="realms reveal">
+    {% for t in collections.thought %}
+    <li class="realm">
+      <a href="{{ t.url }}">
+        <span class="num">{{ loop.index | roman }}</span>
+        <span class="title">{{ t.data.title }}<small>{{ t.date | year }}</small></span>
+        <span class="arrow">→</span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</main>
