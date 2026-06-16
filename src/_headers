@@ -1,4 +1,4 @@
-# Cloudflare Pages — response headers. https://developers.cloudflare.com/pages/configuration/headers/
+# Netlify response headers. https://docs.netlify.com/routing/headers/
 
 /*
   X-Content-Type-Options: nosniff
@@ -8,8 +8,6 @@
 
 # long-cache static assets (filenames are stable; bump by renaming if needed)
 /css/*
-  Cache-Control: public, max-age=31536000, immutable
-/images/*
   Cache-Control: public, max-age=31536000, immutable
 /fonts/*
   Cache-Control: public, max-age=31536000, immutable

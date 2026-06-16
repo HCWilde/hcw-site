@@ -12,4 +12,8 @@ jobs:
           node-version: "20"
           cache: "npm"
       - run: npm ci
-      - run: npm run build
+      # git identity is needed: the CLI tests create commits in throwaway temp repos
+      - run: |
+          git config --global user.email "ci@hcw.local"
+          git config --global user.name "HCW CI"
+      - run: npm test
