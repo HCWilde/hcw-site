@@ -102,6 +102,17 @@ publish_piece() {
   git add -A
   git commit -m "$title"
   git push -u origin "$branch"
+
+  # Act as the HCWilde GitHub account for this repo's PRs, regardless of gh's
+  # globally-active account (override with HCW_GH_USER). git push above uses SSH
+  # (the github-hcw remote alias), so it is unaffected by this.
+  local _gh_user="${HCW_GH_USER:-HCWilde}" _gh_token
+  if _gh_token="$(gh auth token --user "$_gh_user" 2>/dev/null)"; then
+    export GH_TOKEN="$_gh_token"
+  else
+    echo "warning: gh account '$_gh_user' not found; using gh's active account" >&2
+  fi
+
   gh pr create --base main --head "$branch" --title "$title" --body "Add ${title}."
   gh pr merge --auto --squash --delete-branch
   git switch main
